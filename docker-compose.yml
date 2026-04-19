@@ -1,0 +1,29 @@
+services:
+    alpine:
+        build:
+            context: .
+            dockerfile: Dockerfile.alpine
+        image: localhost/benchmark/alpine
+        container_name: benchmark-alpine
+        env_file: .env
+        volumes:
+            - ./results:/app/results
+
+    trixie:
+        build:
+            context: .
+            dockerfile: Dockerfile.trixie
+        image: localhost/benchmark/trixie
+        container_name: benchmark-trixie
+        env_file: .env
+        volumes:
+            - ./results:/app/results
+    fedora:
+        build:
+            context: .
+            dockerfile: Dockerfile.fedora
+        image: localhost/benchmark/fedora
+        container_name: benchmark-fedora
+        env_file: .env
+        volumes:
+            - ./results:/app/results

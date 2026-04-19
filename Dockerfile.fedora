@@ -1,0 +1,38 @@
+FROM docker.io/library/fedora:43
+
+RUN dnf -y --setopt=keepcache=0 update && \
+    dnf -y --setopt=keepcache=0 install \
+    gcc \
+    clang \
+    openssl-devel \
+    pkgconf-pkg-config \
+    git \
+    curl && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+RUN rustup toolchain install 1.95.0 && \
+    rustup default 1.95.0
+
+WORKDIR /app
+
+COPY src src
+COPY Cargo.toml Cargo.lock ./
+COPY data/payload /app/payload
+COPY scripts/run.sh /app/run.sh
+
+# RUN cargo build --release --bin server && \
+#     cp /app/target/release/server /app/server && \
+#     cargo build --release --bin client && \
+#     cp /app/target/release/client /app/client
+RUN cargo build --bin server && \
+    cp /app/target/debug/server /app/server && \
+    cargo build --bin client && \
+    cp /app/target/debug/client /app/client
+
+RUN chmod +x /app/run.sh
+
+ENTRYPOINT ["/app/run.sh"]
