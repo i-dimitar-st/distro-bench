@@ -5,14 +5,13 @@ use std::time::Instant;
 
 mod benchmark;
 mod config;
+mod helpers;
 mod models;
-mod stats;
 
-use crate::config::{get_distro, sanitize_distro};
+use crate::helpers::{build_filename, get_distro, get_kernel_version, percentile, save_to_disk};
 use benchmark::run_benchmark;
-use config::CONCURRENCY;
-use config::TOTAL_REQUESTS;
-use stats::save_to_disk;
+use config::{CONCURRENCY, KERNEL_RELEASE_PATH, OS_RELEASE_PATH, TOTAL_REQUESTS};
+use models::Summary;
 
 #[tokio::main]
 async fn main() {
@@ -22,11 +21,28 @@ async fn main() {
     let start = Instant::now();
 
     let results = run_benchmark(*TOTAL_REQUESTS, *CONCURRENCY).await;
-    save_to_disk(
-        &format!("results/bench-[{}].json", sanitize_distro(&get_distro())),
-        results,
-    );
+    let mut sorted_results = results.clone();
+    sorted_results.sort_unstable();
 
-    let elapsed = start.elapsed();
-    info!("Benchmark complete in {} sec", elapsed.as_secs());
+    let distro = get_distro(OS_RELEASE_PATH);
+    let kernel = get_kernel_version(KERNEL_RELEASE_PATH);
+    let success = results.len();
+    let p50 = percentile(&sorted_results, 50);
+    let p90 = percentile(&sorted_results, 90);
+    let p99 = percentile(&sorted_results, 99);
+
+    let filename = build_filename(&distro);
+    let summary = Summary {
+        distro: distro,
+        kernel: kernel,
+        total: *TOTAL_REQUESTS,
+        concurrency: *CONCURRENCY,
+        success: success,
+        p50: p50,
+        p90: p90,
+        p99: p99,
+    };
+    save_to_disk(&filename, &summary);
+
+    info!("Benchmark complete in {} sec", start.elapsed().as_secs());
 }

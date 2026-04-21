@@ -18,21 +18,17 @@ RUN rustup toolchain install 1.95.0 && \
     rustup default 1.95.0
 
 WORKDIR /app
+RUN mkdir -p /app/results
 
-COPY src src
-COPY Cargo.toml Cargo.lock ./
-COPY data/payload /app/payload
+COPY src /app/src
+COPY Cargo.toml Cargo.lock /app/
+COPY payload.json /app/payload.json
 COPY scripts/run.sh /app/run.sh
 
-# RUN cargo build --release --bin server && \
-#     cp /app/target/release/server /app/server && \
-#     cargo build --release --bin client && \
-#     cp /app/target/release/client /app/client
 RUN cargo build --bin server && \
     cp /app/target/debug/server /app/server && \
     cargo build --bin client && \
     cp /app/target/debug/client /app/client
 
 RUN chmod +x /app/run.sh
-
 ENTRYPOINT ["/app/run.sh"]

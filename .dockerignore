@@ -4,6 +4,7 @@
 Dockerfile*
 docker-compose.yml
 Makefile
+README.md
 rust-toolchain.toml
 target/
 .vscode/

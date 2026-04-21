@@ -2,7 +2,7 @@ services:
     alpine:
         build:
             context: .
-            dockerfile: Dockerfile.alpine
+            dockerfile: ./Dockerfile.alpine
         image: localhost/benchmark/alpine
         container_name: benchmark-alpine
         env_file: .env
@@ -12,7 +12,7 @@ services:
     trixie:
         build:
             context: .
-            dockerfile: Dockerfile.trixie
+            dockerfile: ./Dockerfile.trixie
         image: localhost/benchmark/trixie
         container_name: benchmark-trixie
         env_file: .env
@@ -21,7 +21,7 @@ services:
     fedora:
         build:
             context: .
-            dockerfile: Dockerfile.fedora
+            dockerfile: ./Dockerfile.fedora
         image: localhost/benchmark/fedora
         container_name: benchmark-fedora
         env_file: .env
