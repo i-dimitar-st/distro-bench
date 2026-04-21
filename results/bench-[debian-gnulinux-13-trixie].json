@@ -1,0 +1,10 @@
+{
+  "distro": "Debian GNU/Linux 13 (trixie)",
+  "kernel": "6.19.9-200.fc43.x86_64",
+  "total": 500000,
+  "concurrency": 5000,
+  "success": 465391,
+  "p50": 135,
+  "p90": 273,
+  "p99": 1062
+}
