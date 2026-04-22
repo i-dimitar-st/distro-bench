@@ -28,8 +28,6 @@ results/              Benchmark output files
 
 ### Setup cache
 
-Creates:
-
 - `.cargo-home` → dependencies
 - `.cargo-target` → build artifacts
 
@@ -57,7 +55,7 @@ make cargo-build-release
 make cargo-run-server
 ```
 
-### Run benchmark client
+### Run benchmark
 
 ```bash
 make cargo-run-benchmark
@@ -65,23 +63,23 @@ make cargo-run-benchmark
 
 ## Docker Benchmark (Alpine / Debian / Fedora)
 
-### Build images
+### Build
 
 ```bash
 make build
 ```
 
-### Run benchmarks
-
-```bash
-make run
-```
+### Run
 
 - server starts
 - client runs workload
 - results saved to `./results`
 
-### Stop containers
+```bash
+make run
+```
+
+### Stop
 
 ```bash
 make stop
@@ -93,7 +91,7 @@ make stop
 make logs
 ```
 
-## Clean everything
+## Clean
 
 ```bash
 make cargo-clean
@@ -133,7 +131,7 @@ run.sh
    ↓
 server + client
    ↓
-results written
+results
 ```
 
 ## Typical Workflow
@@ -147,7 +145,6 @@ make run
 
 ## Key Design
 
-- Makefile controls everything
-- Cargo cache speeds up builds
+- Makefile central control
 - Docker ensures identical workloads
 - Results compare OS performance only
