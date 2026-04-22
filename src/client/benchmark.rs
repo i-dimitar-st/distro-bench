@@ -18,22 +18,27 @@ pub async fn run_benchmark(total_req: usize, max_concurrent_req: usize) -> Vec<u
     let mut results = Vec::with_capacity(total_req);
     let mut started = 0;
 
-    // initial
-    while started < total_req && set.len() < max_concurrent_req {
-        set.spawn(async { run_request(&URL).await });
-        started += 1;
-    }
-
-    // main
-    while let Some(res) = set.join_next().await {
-        if let Ok(Some(value)) = res {
-            results.push(value);
-        }
-
-        // fill if required
-        if started < total_req {
+    loop {
+        // Fill
+        while set.len() < max_concurrent_req && started < total_req {
             set.spawn(async { run_request(&URL).await });
             started += 1;
+        }
+
+        // Done
+        if set.is_empty() {
+            break;
+        }
+
+        // Process task
+        if let Some(http_res) = set.join_next().await {
+            if http_res.is_ok() {
+                let request_result: Option<u32> = http_res.unwrap();
+                if request_result.is_some() {
+                    let duration_ms: u32 = request_result.unwrap();
+                    results.push(duration_ms);
+                }
+            }
         }
     }
     return results;

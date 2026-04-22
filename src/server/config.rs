@@ -16,8 +16,8 @@ pub static HOST: Lazy<IpAddr> = Lazy::new(|| {
 pub static PORT: Lazy<u16> = Lazy::new(|| {
     var("PORT")
         .ok()
-        .and_then(|v| v.parse::<u16>().ok())
-        .filter(|p| (1024..65000).contains(p))
+        .and_then(|port| port.parse::<u16>().ok())
+        .filter(|port| (1024..65000).contains(port))
         .unwrap_or(55555)
 });
 

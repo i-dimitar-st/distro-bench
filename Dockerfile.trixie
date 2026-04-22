@@ -1,4 +1,4 @@
-FROM rust:1.95.0-slim-trixie
+FROM docker.io/library/rust:1.95.0-slim-trixie@sha256:76aa902d6549f89bcf89564fd3448bd4d802120d97433ea4d4324c26c7dc6ee9
 
 WORKDIR /app
 RUN mkdir -p /app/results
@@ -8,10 +8,7 @@ COPY Cargo.toml Cargo.lock /app/
 COPY payload.json /app/payload.json
 COPY scripts/run.sh /app/run.sh
 
-RUN cargo build --bin server && \
-    cp /app/target/debug/server /app/server && \
-    cargo build --bin client && \
-    cp /app/target/debug/client /app/client
+RUN cargo build --release --bins --target-dir /app
 
 RUN chmod +x /app/run.sh
 ENTRYPOINT ["/app/run.sh"]

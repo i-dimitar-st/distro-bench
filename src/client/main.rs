@@ -35,6 +35,7 @@ async fn main() {
     let summary = Summary {
         distro: distro,
         kernel: kernel,
+        duration: start.elapsed().as_secs() as u32,
         total: *TOTAL_REQUESTS,
         concurrency: *CONCURRENCY,
         success: success,

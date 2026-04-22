@@ -1,10 +1,11 @@
 {
   "distro": "Fedora Linux 43 (Container Image)",
   "kernel": "6.19.9-200.fc43.x86_64",
-  "total": 500000,
-  "concurrency": 5000,
-  "success": 471557,
-  "p50": 133,
-  "p90": 280,
-  "p99": 1066
+  "duration": 4,
+  "total": 100000,
+  "concurrency": 1000,
+  "success": 100000,
+  "p50": 24,
+  "p90": 42,
+  "p99": 86
 }

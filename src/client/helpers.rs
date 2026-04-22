@@ -1,7 +1,10 @@
 use crate::models::Summary;
+use log::{info, warn};
 use serde_json::to_string_pretty;
 use std::fs::read_to_string;
 use std::fs::write;
+use std::thread::sleep;
+use std::time::Duration;
 
 pub fn get_kernel_version(path: &str) -> String {
     read_to_string(path)
@@ -11,7 +14,7 @@ pub fn get_kernel_version(path: &str) -> String {
 }
 
 pub fn get_distro(path: &str) -> String {
-    read_to_string(path)
+    return read_to_string(path)
         .ok()
         .and_then(|each| {
             each.lines()
@@ -22,27 +25,28 @@ pub fn get_distro(path: &str) -> String {
                         .to_string()
                 })
         })
-        .unwrap_or_else(|| "unknown".to_string())
+        .unwrap_or_else(|| "unknown".to_string());
 }
 
 pub fn sanitize_distro(input: &str) -> String {
-    input
+    return input
         .to_lowercase()
         .chars()
-        .map(|each_char| {
-            if each_char.is_whitespace() {
-                '-'
-            } else {
-                each_char
-            }
-        })
-        .filter(|each_char| each_char.is_ascii_alphanumeric() || *each_char == '-')
-        .collect()
+        .map(|c| if c.is_whitespace() { '-' } else { c })
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_')
+        .collect();
 }
 
-pub fn save_to_disk(filename: &str, summary: &Summary) {
+pub fn save_to_disk(filename: &str, summary: &Summary) -> () {
     let json = to_string_pretty(summary).expect("failed to serialize");
-    write(filename, json).expect("failed to write file");
+    for index in 5..10 {
+        if write(filename, &json).is_ok() {
+            return;
+        }
+        sleep(Duration::from_millis(index * 100));
+    }
+    warn!("failed to write");
+    info!("Summary: {}", json);
 }
 
 pub fn build_filename(distro: &str) -> String {

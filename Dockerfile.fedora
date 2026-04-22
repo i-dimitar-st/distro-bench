@@ -1,15 +1,12 @@
-FROM docker.io/library/fedora:43
+FROM docker.io/library/fedora:43@sha256:781b7642e8bf256e9cf75d2aa58d86f5cc695fd2df113517614e181a5eee9138
 
-RUN dnf -y --setopt=keepcache=0 update && \
-    dnf -y --setopt=keepcache=0 install \
+RUN dnf -y update && \
+    dnf -y install \
     gcc \
-    clang \
     openssl-devel \
     pkgconf-pkg-config \
-    git \
     curl && \
-    dnf clean all && \
-    rm -rf /var/cache/dnf
+    dnf clean all
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
@@ -25,10 +22,7 @@ COPY Cargo.toml Cargo.lock /app/
 COPY payload.json /app/payload.json
 COPY scripts/run.sh /app/run.sh
 
-RUN cargo build --bin server && \
-    cp /app/target/debug/server /app/server && \
-    cargo build --bin client && \
-    cp /app/target/debug/client /app/client
+RUN cargo build --release --bins --target-dir /app
 
 RUN chmod +x /app/run.sh
 ENTRYPOINT ["/app/run.sh"]

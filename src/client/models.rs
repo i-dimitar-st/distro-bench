@@ -4,6 +4,7 @@ use serde::Serialize;
 pub struct Summary {
     pub distro: String,
     pub kernel: String,
+    pub duration: u32,
     pub total: usize,
     pub concurrency: usize,
     pub success: usize,

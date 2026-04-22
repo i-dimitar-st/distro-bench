@@ -8,7 +8,13 @@ services:
         env_file: .env
         volumes:
             - ./results:/app/results
-
+            - ./.cargo-home:/usr/local/cargo
+        networks:
+            - benchmark
+        ulimits:
+            nofile:
+                soft: 15000
+                hard: 20000
     trixie:
         build:
             context: .
@@ -18,6 +24,13 @@ services:
         env_file: .env
         volumes:
             - ./results:/app/results
+            - ./.cargo-home:/usr/local/cargo
+        networks:
+            - benchmark
+        ulimits:
+            nofile:
+                soft: 15000
+                hard: 20000
     fedora:
         build:
             context: .
@@ -27,3 +40,13 @@ services:
         env_file: .env
         volumes:
             - ./results:/app/results
+            - ./.cargo-home:/usr/local/cargo
+        networks:
+            - benchmark
+        ulimits:
+            nofile:
+                soft: 15000
+                hard: 20000
+networks:
+    benchmark:
+        driver: bridge
